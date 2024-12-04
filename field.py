@@ -21,7 +21,7 @@ class Field:
                 self.chip_list[y][x].set_pos(x, y)
                 self.chip_list[y][x].set_chip_no(0)
         # Ｂ－２８最初）マップ番号に対応した情報を設定
-        
+        self.read_map_info()
 
     # 描画をする
     def draw(self):
@@ -34,12 +34,12 @@ class Field:
     # フィールド情報の読み込み
     def read_map_info(self):
         # Ｂ－２９）フィールド情報の設定
-        pass
+        new_filled = Field.MAP_LIST[self.map_no]
         # Ｂ－３０）チップリストの数だけ２重ループ
-        
-            
+        for y in range(Game.FIELD_HEIGHT):
+            for x in range(Game.FIELD_WIDTH):
                 # Ｂ－３１最後）フィールドの該当位置の情報を設定
-                
+                self.chip_list[y][x].set_chip_no(new_filled[y][x])
 
     # フィールドチェンジ
     # （移動方向をfld_x, fld_yのプラスマイナス１でもらう）

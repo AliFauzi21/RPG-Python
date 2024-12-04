@@ -13,38 +13,38 @@ class Player(Character):
     # コンストラクタ
     def __init__(self):
         # Ｃ－３８Characterから）親クラスのコンストラクタを呼び出し
-        pass
+        super().__init__()
         # Ｃ－３９）プレイヤーの位置を設定（親クラスのメソッド）
-        
+        self.set_pos(Game.START_PLAYER_POS_X, Game.START_PLAYER_POS_Y)
         # Ｃ－４０）レベルを設定
-        
+        self.level = Player.PLAYER_LV_1ST
         # Ｃ－４１）ヒットポイントを設定
-        
+        self.hp = Player.PLAYER_HP_1ST
         # Ｃ－４２）プレイヤーの画像リストを作成
-        
-        
+        pl_images = (Game.read_image_for_square('image/hero1.png'),
+                     Game.read_image_for_square('image/hero2.png'))
         # Ｃ－４３mainへ）画像を設定（親クラスの関数）
-        
+        self.set_image_list(pl_images)
         
     # １フレームごとにする画像・処理
     def frame_process_img(self):
         # === 上下左右キーが押されている場合にキャラを移動 ===
         # Ｅ－５７Characterから）
         # 現在位置を取得（Squareクラスのメソッド）
-        
-        
+        posx, posy = self.get_pos()
+        dx, dy = self.get_dpos()
 
         # Ｅ－５８）それぞれのキーに合わせて、移動後のずれ位置を設定
-        
-        
-        
-        
-        
-        
-        
-        
+        if Game.on_downkey():
+            dy += Character.MOVE_STEP
+        elif Game.on_upkey():
+            dy -= Character.MOVE_STEP
+        elif Game.on_leftkey():
+            dx -= Character.MOVE_STEP
+        elif Game.on_rightkey():
+            dx += Character.MOVE_STEP
         # Ｅ－５９）ずれ位置の加算／減算後の値で、プレイヤーの位置を計算
-        
+        posx, posy, dx, dy = self.calc_chara_pos(posx, posy, dx, dy)
         
         # Ｆ－８１最後）マップ移動チェック
         
@@ -59,12 +59,12 @@ class Player(Character):
         # Ｇ－９５最後）マップを変更した場合は移動可能に関わらず移動
         
         # Ｅ－６０最後）加算後の値で、プレイヤーの位置を計算
-        
-        
+        self.set_pos(posx, posy)
+        self.set_dpos(dx, dy)
         
         # Ｄ－５０）Characterから、mainへ
         # キャラクターの画像設定
-        pass
+        self.set_chara_animation()
 
     # マップ移動チェック
     def check_map_move(self, posx, posy, dx, dy):

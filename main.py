@@ -23,7 +23,7 @@ def init_game_info():
     # Ａ－２６Fieldから）フィールド・インスタンスを作成して、ゲームクラスの変数に設定
     Game.field = Field()
     # Ｃ－４４Playerから）プレイヤー・インスタンスを作成して、ゲームクラスの変数に設定
-    
+    Game.player = Player()
     # Ｏ－１８１MonsterListから、最後）追加したモンスターを追加する
     # Ｈ－１０３Monsterから)モンスター・インスタンスのリストを作成して、ゲームクラスの変数に設定
     
@@ -40,18 +40,18 @@ def basic_draw():
     
     
     # Ｃ－４５最後）プレイヤーの描画
-    
+    Game.player.draw()
     # Ｄ－５１Playerから）レベルの描画（左空白埋めで５桁）
-    
-    
-    
-    
+    level_str = str(Game.player.level).rjust(5)
+    level_render = smallfont.render(f'Level:{level_str}',
+                                    True, (255, 255, 255))
+    Game.surface.blit(level_render, (680, 30))    
     # Ｄ－５２）HPの描画（左空白埋めで５桁）
+    hp_str = str(Game.player.hp).rjust(5)
+    hp_render = smallfont.render(f'   HP:{hp_str}',
+                                True, (255, 255, 255))
+    Game.surface.blit(hp_render, (680, 80)) 
     
-    
-    
-    
-
 # メイン処理
 def main():
     # ゲーム情報の初期化処理を実行
@@ -69,7 +69,7 @@ def main():
         # フィールド上の場合
         if Game.phase == Phase.IN_FIELD:
             # Ｄ－５３最後）プレイヤーの毎回処理
-            
+            Game.player.frame_process_img()
             # Ｈ－１０５最後)モンスターの毎回処理
             
             
