@@ -47,20 +47,20 @@ class Player(Character):
         posx, posy, dx, dy = self.calc_chara_pos(posx, posy, dx, dy)
         
         # Ｆ－８１最後）マップ移動チェック
-        
+        posx, posy, dx, dy, is_changed = self.check_map_move(posx, posy, dx, dy)
         
         # Ｇ－９３Characterから）マップを変更していない場合
-        
+        if not is_changed:
             # Ｇ－９３）移動可能チェックで移動可能の場合
-            
+            if self.check_chara_move(posx, posy, dx, dy, Player.UNMOVABLE_CHIP_LIST):
                 # Ｇ－９４）移動する（移動不可なら位置を変更しない）
-                
-                
+                self.set_pos(posx, posy)
+                self.set_dpos(dx, dy)
         # Ｇ－９５最後）マップを変更した場合は移動可能に関わらず移動
-        
+        else:
         # Ｅ－６０最後）加算後の値で、プレイヤーの位置を計算
-        self.set_pos(posx, posy)
-        self.set_dpos(dx, dy)
+            self.set_pos(posx, posy)
+            self.set_dpos(dx, dy)
         
         # Ｄ－５０）Characterから、mainへ
         # キャラクターの画像設定
@@ -69,31 +69,31 @@ class Player(Character):
     # マップ移動チェック
     def check_map_move(self, posx, posy, dx, dy):
         # Ｆ－６９Fieldから）マップ変更フラグ
-        pass
+        is_changed = True
         # Ｆ－７０）右マップへ移動（一番右＋dxが正）
-        
+        if posx == Game.FIELD_WIDTH - 1 and dx > 0:
             # Ｆ－７１）マップを右へ、プレイヤー位置を左へ
-            
-            
+            Game.field.change_field(1, 0)
+            posx, dx = 0, 0
         # Ｆ－７２）左マップへ移動（一番左より左）
-        
+        elif posx < 0:
             # Ｆ－７３）マップを左へ、プレイヤー位置を右へ
-            
-            
+            Game.field.change_field(-1, 0)
+            posx, dx = Game.FIELD_WIDTH - 1, 0
         # Ｆ－７４）下マップへ移動（一番下＋dyが正）
-        
+        elif posy == Game.FIELD_HEIGHT - 1 and dy > 0:
             # Ｆ－７５）マップを下へ、プレイヤー位置を上へ
-            
-            
+            Game.field.change_field(0, 1)
+            posy, dy = 0, 0
         # Ｆ－７６）上マップへ移動（一番上より上）
-        
+        elif posy < 0:
             # Ｆ－７７）マップを上へ、プレイヤー位置を下へ
-            
-            
+            Game.field.change_field(0, -1)
+            posy, dy = Game.FIELD_HEIGHT - 1, 0
         # Ｆ－７８）どれにも当てはまらない場合
-        
+        else:
             # Ｆ－７９）マップ変更なし
-            
+            is_changed = False
 
         # Ｆ－８０上へ）マップ変更後（変更してない場合も）の位置と変更フラグを返却
-        
+        return posx, posy, dx, dy, is_changed

@@ -63,17 +63,17 @@ class Character(Square):
     # キャラクター移動チェック
     def check_chara_move(self, posx, posy, dx, dy, unmovable_chip_list):
         # Ｇ－８７Fieldから）チェック位置リスト
-        pass
+        check_pos_list = []
         # Ｇ－８８）トチェック対象に、移動先のposx, posyを追加
-        
+        check_pos_list.append((posx, posy))
         # Ｇ－８９）もし、上下方向にずれがある場合、ひとつ下のマスもチェック対象に追加
-        
-        
+        if dy != 0:
+            check_pos_list.append((posx, posy + 1))
         # Ｇ－９０）もし、左右方向にずれがある場合、ひとつ右のマスもチェック対象に追加
-        
-        
+        if dx != 0:
+            check_pos_list.append((posx + 1, posy))
         # Ｇ－９１）もし、両方にずれがある場合、右下のマスもチェック対象に追加
-        
-        
+        if dx != 0 and dy != 0:
+            check_pos_list.append((posx + 1, posy + 1))
         # Ｇ－９２Playerへ）フィールドクラスのチェックを実施し、その結果を戻り値に設定
-        
+        return Game.field.check_movable(check_pos_list, unmovable_chip_list)

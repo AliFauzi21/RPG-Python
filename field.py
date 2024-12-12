@@ -49,58 +49,57 @@ class Field:
         # Ｆ－６１）左右移動後の位置がそのまま計算すると
         # 上下のフィールドになってしまう場合は、
         # １始まりなので１を引いてから割って比較）
-        
-        
+        if (self.map_no -1) // Game.MAP_WIDTH != \
+            (self.map_no + fld_x -1) // Game.MAP_WIDTH:
             # Ｆ－６２）フィールドの横の数－１だけ、逆方向に移動
-            
+            self.map_no += (Game.MAP_WIDTH - 1) * (fld_x * - 1)
         # Ｆ－６３）そうでない場合
-        
+        else:
             # Ｆ－６４）マップNoを指定値加算
-            
+            self.map_no += fld_x
         
         # Ｆ－６５）上下に移動した場合は「横マップ数」を足す／引く
-        
+        self.map_no += fld_y * Game.MAP_WIDTH
 
         # Ｆ－６６）フィールド数を超えた場合は、マップ数を引く
-        
-        
+        if self.map_no > map_count:   
+            self.map_no -= map_count
         # Ｆ－６７）０以下になった場合は、マップ数を足す
-        
-
+        elif self.map_no <= 0:
+            self.map_no += map_count
         # Ｆ－６８Playerへ）フィールド情報を再読み込み
-        
-        
-        # Ｊ－１２６Squareから）モンスターの再配置
-        
-            # Ｊ－１２７）マスのピッタリの位置に配置する
+        self.read_map_info()
             
+        # Ｊ－１２６Squareから）モンスターの再配置
+        for monster in Game.monsters:
+            # Ｊ－１２７）マスのピッタリの位置に配置する
+            dx, dy = 0, 0            
             # Ｊ－１２８）配置できるまでループする
             # （※無限ループしてしまわないように、100回で諦める）
-            
+            for _ in range(100):
                 # Ｊ－１２９）プレイヤーが端からくるので、外側の２マスには配置しない
-                
-                
+                posx = random.randint(2, Game.FIELD_WIDTH - 3)
+                posy = random.randint(2, Game.FIELD_HEIGHT - 3)
                 # Ｊ－１３０）モンスターが移動できない位置に配置されてしまった場合はやり直し
-                
-                
-                
+                if not monster.check_chara_move(posx, posy, dx, dy, monster.unmovable_chips):
+                    continue
                 # Ｊ－１３１Monsterへ）移動できる位置ならそこに配置
-                
-                
+                monster.set_pos(posx, posy)
+                monster.set_dpos(dx, dy)
                 
     # 移動可能チェック
     def check_movable(self, pos_list, unmovable_chip_list):
         # Ｇ－８２最初）チェック対象だけ繰り返し
-        pass
+        for pos in pos_list:
             # Ｇ－８３）位置のx, yを取得
-            
+            x, y = pos
             # Ｇ－８４）その位置のチップNoを取得
-            
+            chip_no = self.chip_list[y][x].chip_no 
             # Ｇ－８５）それが移動不可ならFalseを返却
-            
-            
+            if chip_no in unmovable_chip_list:
+                return False
         # Ｇ－８６Characterへ）すべての対象チップが移動可能な場合はTrueを返却
-        
+        return True
 
     # クラス変数：マップ情報
     MAP1 = (

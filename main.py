@@ -26,9 +26,9 @@ def init_game_info():
     Game.player = Player()
     # Ｏ－１８１MonsterListから、最後）追加したモンスターを追加する
     # Ｈ－１０３Monsterから)モンスター・インスタンスのリストを作成して、ゲームクラスの変数に設定
-    
-    
-    
+    Game.monsters = []
+    Game.monsters.append(Monster((8, 1), MonsterList.MON_NO_DOG))
+    Game.monsters.append(Monster((2, 8), MonsterList.MON_NO_BEE))
     # Ｋ－１４６Battleから）戦闘画面
     
 
@@ -37,8 +37,8 @@ def basic_draw():
     # Ａ－２７最後）フィールドの描画
     Game.field.draw()
     # Ｈ－１０４)モンスター達の描画
-    
-    
+    for monster in Game.monsters:
+        monster.draw()
     # Ｃ－４５最後）プレイヤーの描画
     Game.player.draw()
     # Ｄ－５１Playerから）レベルの描画（左空白埋めで５桁）
@@ -71,8 +71,8 @@ def main():
             # Ｄ－５３最後）プレイヤーの毎回処理
             Game.player.frame_process_img()
             # Ｈ－１０５最後)モンスターの毎回処理
-            
-            
+            for monster in Game.monsters:
+                monster.frame_process_img()
             # 基本描画処理
             basic_draw()
 

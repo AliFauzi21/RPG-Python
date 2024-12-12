@@ -12,17 +12,17 @@ class Monster(Character):
     # コンストラクタ
     def __init__(self, pos, monster_no):
         # Ｈ－９６最初）親クラスのコンストラクタを呼び出し
-        
+        super().__init__()
         # Ｈ－９７）モンスター番号を設定
-        
+        self.monster_no = monster_no
         # Ｈ－９８）モンスターの位置を設定（親クラスのメソッド）
-        
+        self.set_pos(pos[0], pos[1])
         # Ｈ－９９）次移動開始時間
-        
+        self.next_move_count = 0
         # Ｈ－１００）移動方向
-        
+        self.move_x, self.move_y = 0, 0
         # Ｈ－１０１下へ）残り移動回数
-        
+        self.remain_move_time = 0
         
         # ===== MonsterList クラスから、モンスターの情報を取得する =====
         # モンスターの画像を作成＆設定
@@ -68,58 +68,58 @@ class Monster(Character):
     # １フレームごとにする画像・処理
     def frame_process_img(self):
         # Ｉ－１０６最初）移動中でない場合
-        pass
+        if self.move_x == 0 and self.move_y == 0:
             # Ｉ－１０７）移動タイミングを超えている場合
-            
+            if self.next_move_count <= Game.count:
                 # Ｉ－１０８）移動方向をランダムに設定
-                
+                self.move_x, self.move_y = random.choice(Monster.MOVE_DIR_LIST)
                 # Ｉ－１０９）残り移動回数を設定
-                
+                self.remain_move_time = self.direction_interval
         # Ｉ－１１０）移動中の場合
-        
+        else:
             # Ｉ－１１１）移動タイミングを超えている場合
-            
+            if self.next_move_count <= Game.count:
                 # --- 上下左右キーが押されている場合にキャラを移動 ---
                 # Ｉ－１１２）現在位置を取得
-                
-                
+                posx, posy = self.get_pos()
+                dx, dy = self.get_dpos()
                 # Ｉ－１１３）移動方向に仮移動
-                
-                
+                dx += Character.MOVE_STEP * self.move_x
+                dy += Character.MOVE_STEP * self.move_y
                 # Ｉ－１１４）加算後の値で、位置を計算
-                
+                posx, posy, dx, dy = self.calc_chara_pos(posx, posy, dx, dy)
                 # Ｉ－１１５）マップ移動チェックで移動可能な場合
                 # ※Monsterクラスのマップ移動チェックは用意済み
                 # Playerと同様だが、マップ移動してしまう場合は移動不可としている
-                
+                if self.check_map_move(posx, posy, dx, dy):
                     # Ｉ－１１６）移動可能チェックで移動可能の場合
-                    
+                    if self.check_chara_move(posx, posy, dx, dy, self.unmovable_chips):
                         # Ｉ－１１７）移動後の位置を設定する（移動不可なら位置を変更しない）
-                        
-                        
+                        self.set_pos(posx, posy)
+                        self.set_dpos(dx, dy)
 
                 # Ｉ－１１８）残り移動回数を１減算
-                
+                self.remain_move_time -= 1
                 # Ｉ－１１９）移動回数が０になったら
-                
+                if self.remain_move_time == 0:
                     # Ｉ－１２０）次の移動タイミングを停止時間後に設定
-                    
+                    self.next_move_count = Game.count + self.stop_interval
                     # Ｉ－１２１）移動方向をなしに
-                    
+                    self.move_x, self.move_y = 0, 0
                 # Ｉ－１２２）移動回数が０でない場合
-                
+                else:
                     # Ｉ－１２３最後）次の移動タイミングを設定
-                    
+                    self.next_move_count = Game.count + self.move_interval
         
         # Ｊ－１３２Fieldから）モンスターとプレイヤーの四角を取得
-        
-        
+        monster_rect = self.get_rect()
+        player_rect = Game.player.get_rect()
         # Ｊ－１３３）重なった場合
-        
+        if monster_rect.colliderect(player_rect):
             # Ｊ－１３４）モンスターを画面外に
             # （画面外に設定すると、移動チェックで出てこれなくなる）
-            
-            
+            self.set_pos(-100, -100)
+            self.set_dpos(0, 0)
             # Ｋ－１３７最初）戦闘フェイズにする
             
             # Ｋ－１３８）戦闘処理の初期化
@@ -129,10 +129,10 @@ class Monster(Character):
             
             # Ｋ－１３９Battleへ）戦闘画面化するので、下の処理をコメントにする
             # Ｊ－１３５）プレイヤーのHPをモンスターの攻撃力分減らす
-            
+            Game.player.hp -= self.attack_power
             # Ｊ－１３６最後）プレイヤーのHPが０以下になったら、フェイズをゲームオーバーにする
+            if Game.player.hp <= 0:
+                Game.phase = Phase.GAME_OVER
             
-            
-        
         # Ｈ－１０２mainへ）キャラクターの画像設定
-        
+        self.set_chara_animation()

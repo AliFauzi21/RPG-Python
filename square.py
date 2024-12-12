@@ -52,7 +52,7 @@ class Square:
     # このスクエアの位置・サイズのRectを取得
     def get_rect(self):
         # Ｊ－１２４最初）位置を設定
-        pass
-        
+        x = self.pos[0] * Game.SQ_LEN + self.dxy[0]
+        y = self.pos[1] * Game.SQ_LEN + self.dxy[1]
         # Ｊ－１２５Fieldへ）四角形を作成し、戻り値として返却
-        
+        return Rect(x, y, Game.SQ_LEN, Game.SQ_LEN)
