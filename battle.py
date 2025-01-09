@@ -50,119 +50,120 @@ class Battle:
     # 戦闘モンスター登録
     def set_monster(self, monster):
         # Ｌ－１４９Monsterから）インスタンス変数のモンスター情報に設定
-        pass
+        self.monster = monster
         # Ｌ－１５０）モンスター戦闘画像の読込
-        
+        full_mon_image = pygame.image.load(monster.battle_image_file)
         # Ｌ－１５１）モンスターの表示サイズに合わせて調整
-        
+        self.mon_image = pygame.transform.scale(full_mon_image, monster.battle_image_size)
         
         # Ｌ－１５２下へ）インスタンス変数のモンスター情報にＨＰを設定
         # その際、主人公のレベル * 2 を追加する
         # ※モンスタークラスのHPを直接減らさないように注意
-        
+        self.btl_monster_hp = monster.hp + Game.player.level * 2
         # Ｍ－１６７最後）敵出現情報をメッセージに追加
-        
+        self.add_msg(self.monster.name + ' が現れた！')
     
     # ウィンドウ描画処理
     def draw_window(self, x, y, width, height):
         # Ｋ－１４０Monsterから）塗りつぶしでウィンドウを描く
-        pass
-        
+        pygame.draw.rect(Game.surface, Battle.WINDOW_COLOR,
+                        Rect(x, y, width, height))
         # Ｋ－１４１）やや内側に、角を丸くした枠線を描く
-        
-        
+        pygame.draw.rect(Game.surface, Battle.FRAME_COLOR,
+                        Rect(x + 5, y + 5, width - 10, height - 10),
+                        Battle.FRAME_WIDTH, border_radius=15)
         
 
     # 画面描画処理
     def draw(self):
         # Ｋ－１４２）モンスター表示用のウィンドウを描画
-        pass
+        self.draw_window(64 * 2, 32, 64 * 6, 64 * 4 + 32)
         # Ｋ－１４３）モンスターウィンドウの中心位置
-        
-        
+        mon_center_x = 64 * 2 + 64 * 6 // 2
+        mon_center_y = 32 + (64 * 4 + 32) // 2
         # Ｌ－１５３）モンスターの中心をウィンドウの中心に設定
-        
-        
+        mon_rect = self.mon_image.get_rect()
+        mon_rect.center = (mon_center_x, mon_center_y)
         # Ｌ－１５４最後）モンスターの描画
-        
+        Game.surface.blit(self.mon_image, mon_rect.topleft)
         # Ｋ－１４４）コマンド表示用のウィンドウを描画
-        
+        self.draw_window(16, 64 * 5 + 32, 64 * 3, 64 * 4)
         # Ｋ－１４５mainへ）メッセージ表示用のウィンドウを描画
-        
+        self.draw_window(64 * 3 + 32, 64 * 5 + 32, 64 * 6, 64 * 4)
         # Ｍ－１５５最初）メッセージとコマンドの描画
-        
+        self.draw_msg_and_command()
 
     # メッセージ追加処理
     def add_msg(self, msg):
         # Ｍ－１５６）メッセージを追加
-        pass
+        self.msg_list.append(msg)
         # Ｍ－１５７）メッセージ数が上限を超えたら、先頭を削除
-        
+        if len(self.msg_list) > Battle.MSG_MAX_LINE:
+            self.msg_list.pop(0)
         
 
     # メッセージとコマンドの描画処理
     def draw_msg_and_command(self):
         # Ｍ－１５８）メッセージの数だけ繰り返し
-        pass
+        for i, msg in enumerate(self.msg_list):
             # Ｍ－１５９）メッセージの設定
-            
+            msg_render = self.msg_font.render(msg, True, Battle.WORD_COLOR)
             # Ｍ－１６０）メッセージの描画
-            
+            Game.surface.blit(msg_render, (240, i * 32 + 365))
             
         # Ｍ－１６１）コマンドの数だけ繰り返し
-        
+        for i, cmd in enumerate(self.cmd_list):
             # Ｍ－１６２）選択されているコマンドの場合み色を変える
-            
+            if i == self.select_cmd_no:
                 # Ｍ－１６３）色を選択色に
-                
+                cmd_render = self.cmd_font.render(cmd, True, Battle.SELECT_CMD_COLOR)
             # Ｍ－１６４）選択されてなければ
-            
+            else:
                 # Ｍ－１６５）通常色に
-                
+                cmd_render = self.cmd_font.render(cmd, True, Battle.WORD_COLOR)
             # Ｍ－１６６上へ）コマンドの描画
-            
+            Game.surface.blit(cmd_render, (38, i * 45 + 365))
 
     # コマンド移動、チェック処理
     def cmd_check(self):
         # Ｎ－１６８最初）スペースキーかエンターキーが押された場合
-        pass
+        if Game.on_spacekey() or Game.on_enterkey():
             # Ｎ－１６９）コマンドを決定する
-            
-            
-            
+            self.decide_cmd_no = self.select_cmd_no
+            self.msg_step = 0
+            self.last_key = 0
             # Ｎ－１７０）以降の処理は行わず、関数を終了する
-            
+            return
 
         # Ｎ－１７１）それぞれのキーに合わせて、選択コマンドを設定
         # ただし、押したキーを離さないと次のコマンドに行かない
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
+        if Game.on_downkey():
+            if self.last_key != 1:
+                self.select_cmd_no += 1
+                self.last_key = 1
+        elif Game.on_upkey():
+            if self.last_key != -1:
+                self.select_cmd_no -= 1
+                self.last_key = -1    
+        else:
+            self.last_key = 0
         # Ｎ－１７２）コマンド数で割ったあまりにすることで、上下ループできる
-        
+        self.select_cmd_no = self.select_cmd_no % len(self.cmd_list)
 
     # １フレームごとにする戦闘処理
     def frame_process_btl(self):
         # Ｎ－１７３）コマンドが選択されてない場合
-        pass
+        if self.decide_cmd_no < 0:
             # Ｎ－１７４）コマンド移動、チェック処理のみ実施
-            
-            
+            self.cmd_check()
+            return
         
         # Ｎ－１７５）メッセージを表示するタイミングが来た場合
         # （戦闘処理の内部で、タイミングを設定）
-        
+        if self.next_msg_count <= Game.count:
             # Ｎ－１７６mainへ）戦闘処理を実施
             # ※戦闘処理自体は、今回は実装済みです
-            
+            self.battle_process()
 
     # 戦闘処理
     # 選択されたコマンドによって処理を行う

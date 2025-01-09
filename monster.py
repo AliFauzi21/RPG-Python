@@ -121,14 +121,24 @@ class Monster(Character):
             
             
             # Ｋ－１３７最初）戦闘フェイズにする
-            
+            Game.phase = Phase.IN_BATTLE
             # Ｋ－１３８）戦闘処理の初期化
-            
+            Game.battle.init_data()            
             # Ｌ－１４８最初Battleへ）戦闘クラスに、モンスター情報を設定
+            Game.battle.set_monster(self)
             
+<<<<<<< Updated upstream
             
             # Ｋ－１３９Battleへ）戦闘画面化するので、下の処理をコメントにする
             # Ｊ－１３５）プレイヤーのHPをモンスターの攻撃力分減らす
+=======
+            # # Ｋ－１３９Battleへ）戦闘画面化するので、下の処理をコメントにする
+            # # Ｊ－１３５）プレイヤーのHPをモンスターの攻撃力分減らす
+            # Game.player.hp -= self.attack_power
+            # # Ｊ－１３６最後）プレイヤーのHPが０以下になったら、フェイズをゲームオーバーにする
+            # if Game.player.hp <= 0:
+            #     Game.phase = Phase.GAME_OVER
+>>>>>>> Stashed changes
             
             # Ｊ－１３６最後）プレイヤーのHPが０以下になったら、フェイズをゲームオーバーにする
             

@@ -26,11 +26,18 @@ def init_game_info():
     Game.player = Player()
     # Ｏ－１８１MonsterListから、最後）追加したモンスターを追加する
     # Ｈ－１０３Monsterから)モンスター・インスタンスのリストを作成して、ゲームクラスの変数に設定
+<<<<<<< Updated upstream
     
     
     
+=======
+    Game.monsters = []
+    Game.monsters.append(Monster((8, 1), MonsterList.MON_NO_DOG))
+    Game.monsters.append(Monster((2, 8), MonsterList.MON_NO_BEE))
+    Game.monsters.append(Monster((8, 8), MonsterList.MON_NO_SKELETON))
+>>>>>>> Stashed changes
     # Ｋ－１４６Battleから）戦闘画面
-    
+    Game.battle = Battle()
 
 # 基本描画処理
 def basic_draw():
@@ -79,11 +86,11 @@ def main():
         # 戦闘中の場合
         elif Game.phase == Phase.IN_BATTLE:
             # Ｎ－１７７Battleから、最後）戦闘中の毎回処理
-            
+            Game.battle.frame_process_btl()
             # 基本描画処理
             basic_draw()
             # Ｋ－１４７最後）戦闘画面描画処理
-            
+            Game.battle.draw() 
             
         # ゲームオーバーの場合
         elif Game.phase == Phase.GAME_OVER:

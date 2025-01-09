@@ -6,7 +6,8 @@ class MonsterList:
     # モンスターリストの番号
     MON_NO_DOG = 0
     MON_NO_BEE = 1
-    
+    MON_NO_SKELETON = 2
+
     # モンスター情報取得関数各種
     @classmethod
     def get_monster_name(cls, monster_no):
@@ -63,7 +64,7 @@ class MonsterList:
         1,
         25,
         'image/enemy2.png',
-        (285//3, 320//3)
+        (500//3, 500//3)
     )
 
     # モンスター２
@@ -79,15 +80,27 @@ class MonsterList:
         10,
         'image/enemy5.png',
         #(440, 540)
-        (440//3, 540//3)
+        (500//3, 500//3)
     )
     # Ｏ－１７９）上のモンスターを参考に、
     # モンスター情報を追加する
-
-
+    MONSTER_Skeleton = (
+        'Iron Skull',
+        (Game.read_image_for_square('image_other/enemy4.png'),
+        Game.read_image_for_square('image_other/enemy4.png')),
+        4,
+        20,
+        3,
+        [],
+        2,
+        10,
+        'image_other/enemy4.png',
+        (500//3, 500//3)
+    )
     # モンスターリスト
     # Ｏ－１８０mainへ）追加したモンスターをモンスターリストに追加する
     MONSTER_LIST = (
         MONSTER_DOG,
-        MONSTER_BEE
+        MONSTER_BEE,
+        MONSTER_Skeleton
     )
